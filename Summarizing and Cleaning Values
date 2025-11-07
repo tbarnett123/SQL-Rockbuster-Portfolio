@@ -1,0 +1,40 @@
+--The following query is to check if there is any NULL in key columns of the film table.
+
+SELECT *
+FROM film
+WHERE title IS NULL
+  OR description IS NULL
+  OR release_year IS NULL
+  OR rental_duration IS NULL
+  OR rental_rate IS NULL
+  OR replacement_cost IS NULL
+
+-- This query finds films with the same title and release year that appears more than once.
+
+SELECT title, release_year, COUNT(*)
+FROM film
+GROUP BY title, release_year
+HAVING COUNT(*) >1;
+
+-- This query ensures that no key customer information is missing
+
+SELECT * 
+FROM customer
+WHERE first_name IS NULL
+  OR last_name IS NULL
+  OR email IS NULL
+  OR address_id IS NULL
+
+-- This query checks for duplicate customer entries (same name and email)
+
+SELECT first_name, last_name, email, COUNT(*)
+FROM customer
+GROUP BY first_name, last_name, email
+HAVING COUNT(*) >1;
+
+-- This identifies invalid or incoreectly formated emails.
+
+SELECT DISTINCT(title)
+FROM customer
+WHERE email NOT LIKE '%@%.%';
+
