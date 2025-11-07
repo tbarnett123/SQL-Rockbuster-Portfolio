@@ -1,0 +1,27 @@
+-- This query calculates the descriptive statistics for the film table.
+
+SELECT
+  MIN(rental_rate) AS min_rental_rate,
+  MAX(rental_rate) AS mmax_rental_rate,
+  AVG(rental_rate) AS avg_rental_rate,
+  MIN(length) AS min_length,
+  MAX(length) AS max_length,
+  AVG(length) AS avg_length,
+  MIN(rental_duration_) AS min_rental_duration,
+  MAX(rental_duration_) AS max_rental_duration,
+  AVG(rental_duration_) AS avg_rental_duration,
+  MIN(replacement_cost) AS min_replacement_cost,
+  MAX(replacement_cost) AS max_replacement_cost,
+  AVG(replacement_cost) AS avg_replacement_cost,
+  MODE() WITHIN GROUP (ORDER BY rating) AS mode_rating
+FROM film;
+
+-- This query calculates the descriptive statistics for the customer table.
+
+SELECT
+  MIN(active) AS min_active,
+  MAX(active) AS max_active,
+  AVG(active) AS avg_active
+FROM customer;
+  
+  
