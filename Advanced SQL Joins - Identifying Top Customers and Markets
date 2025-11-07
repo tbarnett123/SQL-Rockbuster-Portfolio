@@ -1,0 +1,42 @@
+-- This query finds the top 10 cities that fall within the top 10 countries.
+
+SELECT cit.city
+      cou.country,
+      COUNT(cust.customer_id) AS count_of_cust
+FROM customer AS cust
+INNER JOIN address AS addy ON cust.address_id = addy.address_id
+INNER JOIN city AS cit ON addy.city_id = cit.city_id
+INNER JOIN country AS cou ON cit.country_id = cou.country_id
+WHERE cou.country IN ('India','China','United States','Japan',
+                      'Mexico','Brazil','Russian Federation',
+                      'Philippines','Turkey','Indonesia')
+GROUP BY cit.city,cou.country
+ORDER BY COUNT(cust.customer_id) DESC
+LIMIT 10;
+
+-- This query find the top 5 customers from the top 10 cities who have paid the highest total amounts to Rockbuster.
+
+SELECT
+  cust.customer_id,
+  cust.first_name,
+  cust.last_name,
+  cty.city,
+  ctry.country,
+  ROUND(SUM(pmt.amount)::numeric, 2) AS Total_amount_paid
+FROM payment AS pmt
+JOIN customer AS cust ON pmt.customer_id = cust.customer_id
+JOIN address AS addy ON cust.address_id = addy.address_id
+JOIN city AS cty ON addy.city_id = cty.city_id
+JOIN country AS ctry ON cty.country_id = ctry.country_id
+WHERE cty.city IN(
+  'Aurora','Atlixco','Xintai','Adoni'.'Dhule(Dhulia)'.
+  'Kurashiki','Pingxiang','Sivas','Celaya','So Leopoldo'
+)
+AND ctry.country IN(
+  'India','China','United States','Japan','Mexico',
+  'Brazil','Russian Federation','Philippines','Turkey','Indonesia'
+)
+GROUP BY cust.customer_id, cust.first_name, cust.last_name, cty.city, ctry.country
+ORDER BY total_amount_paid DESC
+LIMIT 5;
+
