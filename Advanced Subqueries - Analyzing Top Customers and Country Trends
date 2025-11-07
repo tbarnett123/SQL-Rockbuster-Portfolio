@@ -1,0 +1,45 @@
+-- This query identifies how many of the top 5 customers are in the top 10 countries.
+
+SELECT
+  outer_all.country,
+  COUNT(DISTINCT outer_all.customer_id) AS all_customer_count,
+  COUNT(DISTINCT top_5_customers.customer_id) AS top_customer_count
+FROM (
+-- Outer: all customers joined to country
+SELECT c.customer_id,
+      ctry.country
+FROM customer AS c
+JOIN address AS a ON c.address_id = a.address_id
+JOIN city AS ci ON a.city_id = ci.city_id
+JOIN country AS ctry ON ci.country_id = ctry.country_id
+) AS outer_all
+LEFT JOIN (
+-- Inner: top 5 customers by total amount paid (Step 3 of 3.7)
+SELECT
+  cust.customer_id,
+  cust.first_name,
+  cust.last_name,
+  cty.city,
+  ctry.country,
+ROUND(SUM(pmt.amount)::numeric, 2) AS total_amount_paid
+FROM payment AS pmt
+JOIN customer AS cust ON pmt.customer_id = cust.customer_id
+JOIN address AS addy ON cust.address_id = addy.address_id
+JOIN city AS cty ON addy.city_id = cty.city_id
+JOIN country AS ctry ON cty.country_id = ctry.country_id
+WHERE cty.city IN (
+        'Aurora','Atlixco','Xintai','Adoni','Dhule (Dhulia)',
+        'Kurashiki','Pingxiang','Sivas','Celaya','So Leopoldo'
+)
+AND ctry.country IN (
+        'India','China','United States','Japan','Mexico',
+        'Brazil','Russian Federation','Philippines','Turkey','Indonesia'
+)
+GROUP BY cust.customer_id, cust.first_name, cust.last_name, cty.city, ctry.country
+ORDER BY total_amount_paid DESC
+LIMIT 5
+) AS top_5_customers
+ON outer_all.country = top_5_customers.country
+GROUP BY outer_all.country
+ORDER BY top_customer_count DESC, all_customer_count DESC;
+
